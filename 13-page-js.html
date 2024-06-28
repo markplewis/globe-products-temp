@@ -1,0 +1,156 @@
+<script>
+  // utm append
+  "use strict";
+
+  // define offers & campaign codes
+  const priceData = {
+    digital: {
+      price: "$1.99"
+    },
+    USGU: {
+      price: "$1.50"
+    },
+    WESTERNGLOBE: {
+      price: "99¢"
+    },
+    PT14952W922: {
+      price: "$1.49"
+    },
+    PT24952W922: {
+      price: "$2.49"
+    },
+    PT29952W922: {
+      price: "$2.99"
+    },
+    INTRO9952W822: {
+      price: "99¢"
+    },
+    INTRO19924823: {
+      price: "$1.99",
+      duration: "24 weeks"
+    },
+    "label=digital": {
+      price: "$1.99"
+    }
+  };
+
+  // define page elements
+  const select = {
+    digitalPrice: "#digital-price",
+    digitalWeeklySave: "#digital-weekly-save",
+    digitalWeeklyPrice: "#digital-weekly-price",
+    digitalAnnualSave: "#digital-annual-save",
+    digitalAnnualPrice: "#digital-annual-price",
+    digitalWeeklyDuration: "#digital-weekly-duration",
+    btnDigital: "#btn-digital",
+    btnHDSat: "#btn-home-delivery-sat",
+    btnHDFull: "#btn-home-delivery-full",
+    btnDigitalWeekly: "#btn-digital-weekly",
+    btnDigitalAnnual: "#btn-digital-annual",
+    btnSubscribeWRegular: '[data-sophi-label="subscribe with regular"]'
+  };
+
+  // SwG setup begin =======
+  const googleQuery = window.location.href.includes("subsgoogle");
+
+  if (googleQuery) {
+    // show SwG and hide multi_offers
+    document.querySelector("#multi-offers").classList.add("u-hidden");
+    document.querySelector(".l-header > div:nth-child(5)").classList.add("subsgoogle", "offer_container");
+    document.querySelector(".subsgoogle > div:nth-child(1) > div:nth-child(1)").classList.add("offer");
+    document.querySelector(".l-header > div:nth-child(6)").classList.remove("offer-bg");
+  } else {
+    // hide SwG
+    document.querySelector(".l-header > div:nth-child(5)").classList.add("u-hidden");
+    document.querySelector(".l-header > div:nth-child(6)").classList.add("offer-bg");
+  }
+  // SwG setup end =======
+
+  const url = new URL(window.location.href);
+  const queryString = window.location.search;
+  let tag_value = url.searchParams.get("utm_cmp") || url.searchParams.get("intcmp");
+
+  let vector = "productpg";
+  let campaignCode = "digital";
+
+  const appendTag = function appendTag() {
+    // if utm_cmp tag exist update vector & campaign code for GU offers
+    if (tag_value) {
+      vector = tag_value.split("-")[0];
+
+      // update campaign code if not flash sale
+      if (!tag_value.includes("cemfsale")) {
+        campaignCode = tag_value.split("-")[1] || "digital";
+      }
+    }
+    // CEM-2172 logic to update price and cta:
+    if (googleQuery || tag_value?.includes("subscriberbtn_") || tag_value?.includes("emailwinback_")) {
+      vector = tag_value.split("_")[0];
+      campaignCode = tag_value.split("_")[1];
+    }
+
+    // Construct the url due to Limio changes
+    const subsENV = window.location.href.includes("arc-") ? "stg-" : "";
+    const subscriberURL = "subscriptions.theglobeandmail.com/";
+    const subsTag = `?utm_cmp=${vector}`;
+
+    // SwG setup begin =======
+    if (googleQuery) {
+      campaignCode = "digital";
+      document
+        .querySelector(select.btnSubscribeWRegular)
+        .setAttribute("href", `https://${subsENV}${subscriberURL}${campaignCode}${queryString.includes("utm") ? queryString : subsTag}`);
+      // SwG setup end =======
+    } else {
+      // update button links with vector from url
+      document
+        .querySelector(select.btnHDSat)
+        .setAttribute("onclick", `window.location.href='https://subscribe.theglobeandmail.com/#/SATCEM1666?intcmp=${vector}'`);
+      document
+        .querySelector(select.btnHDFull)
+        .setAttribute("onclick", `window.location.href='https://subscribe.theglobeandmail.com/#/FULLCEM1666?intcmp=${vector}'`);
+
+      // update digital price & button link if there is campaign code provided
+      if (campaignCode !== undefined) {
+        document.querySelector(select.digitalPrice).innerText = priceData[campaignCode].price;
+        document
+          .querySelector(select.btnDigital)
+          .setAttribute(
+            "onclick",
+            `window.location.href='https://${subsENV}${subscriberURL}${campaignCode}${queryString.includes("utm") ? queryString : subsTag}'`
+          );
+        if (priceData[campaignCode].duration) {
+          document.querySelector(select.digitalWeeklyDuration).innerText = `for first ${priceData[campaignCode].duration} weeks`;
+        }
+      }
+    }
+    console.log("Link appended with cid tag");
+  };
+
+  // only append tag if coming from test
+  if (queryString.includes("utm")) {
+    appendTag();
+  }
+
+  // Display navbar on scroll
+  window.onscroll = function () {
+    if (document.documentElement.scrollTop > 100) {
+      document.querySelector("#mainNav").classList.add("navbar-scrolled");
+    } else {
+      document.querySelector("#mainNav").classList.remove("navbar-scrolled");
+    }
+  };
+
+  // hide and show valueprop
+  function showValueprop(elem) {
+    elem.parentNode.getElementsByClassName("valueprop")[0].classList.toggle("mb-show");
+    if (googleQuery) {
+      elem.parentNode.getElementsByClassName("valueprop")[1].classList.toggle("mb-show");
+    }
+  }
+
+  // hide and show FAQ
+  function expandFAQ(elem) {
+    elem.parentNode.classList.toggle("expand");
+  }
+</script>
