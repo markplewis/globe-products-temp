@@ -56,13 +56,13 @@
   if (googleQuery) {
     // show SwG and hide multi_offers
     document.querySelector("#multi-offers").classList.add("u-hidden");
-    document.querySelector(".l-header > div:nth-child(5)").classList.add("subsgoogle", "offer_container");
+    document.querySelector(".l-header > div:nth-child(5 of :not([data-fusion-component]))").classList.add("subsgoogle", "offer_container");
     document.querySelector(".subsgoogle > div:nth-child(1) > div:nth-child(1)").classList.add("offer");
-    document.querySelector(".l-header > div:nth-child(6)").classList.remove("offer-bg");
+    document.querySelector(".l-header > div:nth-child(6 of :not([data-fusion-component]))").classList.remove("offer-bg");
   } else {
     // hide SwG
-    document.querySelector(".l-header > div:nth-child(5)").classList.add("u-hidden");
-    document.querySelector(".l-header > div:nth-child(6)").classList.add("offer-bg");
+    document.querySelector(".l-header > div:nth-child(5 of :not([data-fusion-component]))").classList.add("u-hidden");
+    document.querySelector(".l-header > div:nth-child(6 of :not([data-fusion-component]))").classList.add("offer-bg");
   }
   // SwG setup end =======
 
