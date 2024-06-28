@@ -1,0 +1,81 @@
+<!-- page-js START -->
+<script>
+  //the feeds
+  var bcRequestURL = "https://www.theglobeandmail.com/interactive-queries/?outputType=json&q=british-columbia-feed";
+  var albRequestURL = "https://www.theglobeandmail.com/interactive-queries/?outputType=json&q=alberta-feed";
+
+
+  var header = document.querySelector('header');
+  var section = document.querySelector('section');
+
+  //json requests for both feeds
+  var request = new XMLHttpRequest();
+  request.open('GET', bcRequestURL);
+  request.responseType = 'json';
+  request.send();
+
+  request.onload = function () {
+    var articles = request.response;
+    showArticles(articles, '#bcEditWrapper');
+  }
+
+  var request2 = new XMLHttpRequest();
+  request2.open('GET', albRequestURL);
+  request2.responseType = 'json';
+  request2.send();
+
+  request2.onload = function () {
+    var articles = request2.response;
+    showArticles(articles, '#albEditWrapper');
+  }
+
+  //build the feeds
+  function showArticles(jsonObj, target) {
+    var entries = jsonObj['entries'];
+
+    for (var i = 0; i < 8; i++) {
+      if (entries[i].image['srcset'] == undefined) {
+        $(target).append('<a href="https://theglobeandmail.com/' + entries[i].canonical_url + '" class="editCard font__pratt-bold">' +
+          '<div style="text-align:left" class="o-card__content">' +
+          '<div class="o-card__col"> ' +
+          '<div > ' +
+          '</div> ' +
+          '</div>' +
+          '<div class="o-card__col">' +
+          '<span>' +
+          '<span> ' +
+          '<span>' + entries[i].headlines.basic + '</span> ' +
+          '</span> ' +
+          '</br> <span style="color:red; display: block; padding-top:20px; text-align:left;">Read Now</span>' +
+          '</span> ' +
+          '</div> ' +
+          '</div>' +
+          '</a>');
+
+      } else {
+
+        $(target).append('<a href="https://theglobeandmail.com/' + entries[i].canonical_url + '" class="editCard font__pratt-bold">' +
+          '<div  style="text-align:left;" class="o-card__content">' +
+          '<div class="o-card__col"> ' +
+          '<div > ' +
+          '<div> ' +
+          '<img src="' + entries[i].image.srcset['400'].src + '">' +
+          '</div> ' +
+          '</div> ' +
+          '</div>' +
+          '<div class="o-card__col">' +
+          '<span>' +
+          '<span> ' +
+          '<span>' + entries[i].headlines.basic + '</span> ' +
+          '</span> ' +
+          '</br> <span style="color:red; display: block; padding-top:20px; text-align:left;">Read Now</span>' +
+          '</span> ' +
+          '</div> ' +
+          '</div>' +
+          '</a>');
+      }
+    }
+  }
+
+</script>
+<!-- page-js END -->
